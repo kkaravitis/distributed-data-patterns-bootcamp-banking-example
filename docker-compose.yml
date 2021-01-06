@@ -77,6 +77,7 @@ services:
       - zipkin
     ports:
       - "8081:8080"
+      - "4013:8000"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql/eventuate
       EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
@@ -84,6 +85,7 @@ services:
       SPRING_SLEUTH_ENABLED: "true"
       SPRING_SLEUTH_SAMPLER_PROBABILITY: 1
       SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
+      JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n
 # end container
   api-gateway-service:
     build: ./api-gateway-service
@@ -104,6 +106,7 @@ services:
     build: ./account-service
     ports:
       - "8082:8080"
+      - "4014:8000"
     depends_on:
       - cdc-service
       - zipkin
@@ -114,11 +117,13 @@ services:
       SPRING_SLEUTH_ENABLED: "true"
       SPRING_SLEUTH_SAMPLER_PROBABILITY: 1
       SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
+      JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n
 # end container
   money-transfer-service:
     build: ./money-transfer-service
     ports:
       - "8083:8080"
+      - "4015:8000"
     depends_on:
       - cdc-service
       - zipkin
@@ -129,6 +134,7 @@ services:
       SPRING_SLEUTH_ENABLED: "true"
       SPRING_SLEUTH_SAMPLER_PROBABILITY: 1
       SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
+      JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n
 # end container
   customer-view-service:
     build: ./customer-view-service
@@ -138,6 +144,7 @@ services:
       - zipkin
     ports:
       - "8084:8080"
+      - "4016:8000"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql/eventuate
       EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
@@ -146,6 +153,7 @@ services:
       SPRING_SLEUTH_ENABLED: "true"
       SPRING_SLEUTH_SAMPLER_PROBABILITY: 1
       SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
+      JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n
 # end container
   zipkin:
     image: openzipkin/zipkin:2.21

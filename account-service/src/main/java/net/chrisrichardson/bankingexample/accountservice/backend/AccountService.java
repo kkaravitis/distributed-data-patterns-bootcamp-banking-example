@@ -1,6 +1,8 @@
 package net.chrisrichardson.bankingexample.accountservice.backend;
 
+import io.eventuate.tram.events.common.DomainEvent;
 import io.eventuate.tram.events.publisher.DomainEventPublisher;
+import java.util.List;
 import net.chrisrichardson.bankingexample.accountservice.common.AccountInfo;
 import net.chrisrichardson.bankingexample.accountservice.common.events.AccountCreditedEvent;
 import net.chrisrichardson.bankingexample.accountservice.common.events.AccountDebitedEvent;
@@ -27,7 +29,6 @@ public class AccountService {
     this.domainEventPublisher = domainEventPublisher;
   }
 
-
   public Account openAccount(AccountInfo accountInfo) {
     logger.info("AccountService is opening account = {}", accountInfo);
     Account account = new Account(accountInfo);
@@ -39,7 +40,18 @@ public class AccountService {
   }
 
   private void publishAccountOpenedEvent(Account account) {
-    throw new RuntimeException("not yet implemented");
+    AccountInfo accountInfo = new AccountInfo(account.getCustomerId(), account.getName(), account.getBalance());
+    AccountOpenedEvent accountOpenedEvent = new AccountOpenedEvent(accountInfo);
+
+    Class<?> aggregateType = Account.class;
+    Object aggregateId = account.getId();
+    List<DomainEvent> domainEvents = Collections.singletonList(accountOpenedEvent);
+
+    domainEventPublisher.publish(
+        aggregateType,
+        aggregateId,
+        domainEvents
+    );
   }
 
   public Optional<Account> findAccount(long id) {
